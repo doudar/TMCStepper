@@ -304,7 +304,9 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 			static_cast<uint8_t>(out>> 0)
 		};
 		uint8_t crc = calcCRC(out_datagram, 7);
-		if ((crc != static_cast<uint8_t>(out)) || crc == 0 ) {
+		// Zero is a valid CRC (for example, IFCNT == 174). _sendDatagram
+		// returns zero only when no complete reply was received.
+		if ((crc != static_cast<uint8_t>(out)) || out == 0 ) {
 			CRCerror = true;
 			out = 0;
 		} else {
